@@ -1,8 +1,9 @@
 import Category from "../models/Category.js";
+import Product from "../models/Product.js";
 
 export const getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find().sort({ createAt: -1 });
+    const categories = await Category.find().sort({ createdAt: -1 });
     res.status(200).json(categories);
   } catch (error) {
     console.log("Error fetching data:", error);

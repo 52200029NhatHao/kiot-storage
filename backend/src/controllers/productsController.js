@@ -8,12 +8,13 @@ import {
 import {
   buildProductData,
   handleImageUpload,
+  handleProductUpdateField,
   validateCategory,
 } from "../utils/productUtils.js";
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ createAt: -1 });
+    const products = await Product.find().sort({ createdAt: -1 });
     res.status(200).json(products);
   } catch (error) {
     console.log("Error fetching data: ", error);
@@ -69,25 +70,21 @@ export const updateProduct = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const product = await Product.findById(id);
+    let product = await Product.findById(id);
     if (!product)
       return res
         .status(404)
-        .json({ message: `Product with id of ${id} was not founded` });
-    if (categoryid) {
-      await validateCategory(categoryid);
-      product.categoryid = categoryid;
-    } else product.categoryid = null;
-
+        .json({ message: `Product with value of ${id} was not founded` });
+    const checkCate = await validateCategory(categoryid);
+    if (checkCate === false)
+      return res
+        .status(404)
+        .json({ message: `Category with id of ${categoryid} was not founded` });
+    product = handleProductUpdateField(product, req.body);
     const imageUrl = await handleImageUpload(req.files);
     if (imageUrl.length > 0) product.imageUrl.push(...imageUrl);
-
-    if (barcode) {
-      product.barcode = barcode;
-    }
-
-    const newProduct = await product.save();
-    res.status(200).json(newProduct);
+    product.save();
+    res.status(200).json(product);
   } catch (err) {
     console.error("Create product failed:", err);
     res.status(500).json({ message: err.message || "Internal Server Error" });

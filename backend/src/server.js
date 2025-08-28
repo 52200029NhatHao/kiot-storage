@@ -3,6 +3,7 @@ import { connectDB } from "./config/db.js";
 import path from "path";
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import receiptRoutes from "./routes/receiptRoutes.js";
 import cors from "cors";
 import logger from "./middleware/logger.js";
 
@@ -24,6 +25,7 @@ app.use(logger);
 
 app.use("/api/products", productRoutes);
 app.use("/api/category", categoryRoutes);
+app.use("/api/receipt", receiptRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {

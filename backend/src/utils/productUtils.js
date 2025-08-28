@@ -18,10 +18,13 @@ export const handleImageUpload = async (files) => {
 
 export const validateCategory = async (categoryid) => {
   if (!categoryid) return;
+  console.log(!categoryid);
+
   const category = await Category.findById(categoryid);
   if (!category) {
-    throw new Error(`Category with id ${categoryid} not found`);
+    return false;
   }
+  return true;
 };
 
 export const buildProductData = (body, imageUrl) => {
@@ -37,4 +40,26 @@ export const buildProductData = (body, imageUrl) => {
     categoryid: body.categoryid,
     imageUrl: imageUrl,
   };
+};
+
+export const handleProductUpdateField = (product, body) => {
+  const allowedFields = [
+    "barcode",
+    "name",
+    "sellPrice",
+    "importPrice",
+    "stock",
+    "warningStock",
+    "unit",
+    "available",
+    "notice",
+    "categoryid",
+  ];
+
+  for (let field of allowedFields) {
+    if (body[field] !== undefined) {
+      product[field] = body[field];
+    }
+  }
+  return product;
 };
