@@ -9,18 +9,26 @@ const productSchema = new mongoose.Schema(
     sellPrice: { type: mongoose.Schema.Types.Decimal128, default: 0 },
 
     stock: { type: Number, default: 0 },
-    waringStock: { type: Number, default: 0 },
+    warning_stock: { type: Number, default: 0 },
 
     unit: { type: String, default: "Cái" },
-    imageUrl: [{ type: String }],
+
+    image: String,
 
     available: { type: Boolean, default: true },
 
-    notice: { type: String },
+    notice: { type: String, default: "" },
 
-    categoryid: {
+    status: {
       type: String,
-      default: null,
+      enum: ["available", "disable"],
+      default: "available",
+    },
+
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
     },
   },
   { timestamps: true }

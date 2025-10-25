@@ -1,0 +1,33 @@
+services:
+  database:
+    image: mongo:7
+    container_name: kiot-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: kiot-backend
+    restart: on-failure
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URL=mongodb://database:27017/warehouse
+    depends_on:
+      - database
+    command: sh -c "node seed.js && node src/server.js"
+
+  frontend:
+    build: ./frontend
+    container_name: kiot-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

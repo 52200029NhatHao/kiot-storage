@@ -10,11 +10,11 @@ export async function getNextSequence(name) {
 }
 
 export function generateProductCode(id, date) {
-  const datePart = date
-    .toLocaleDateString("en-GB")
-    .split("/")
-    .join("")
-    .slice(0, 6);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).slice(-2);
+
   const paddedId = String(id).padStart(3, "0");
-  return `SP${datePart}${paddedId}`;
+
+  return `SP${day}${month}${year}${paddedId}`;
 }

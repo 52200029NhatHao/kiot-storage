@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL =
+  process.env.MONGO_URL || "mongodb://warehouse-mongodb:27017/warehouse";
 
 export const connectDB = async () => {
   try {

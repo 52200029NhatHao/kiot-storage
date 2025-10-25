@@ -1,19 +1,16 @@
 import express from "express";
-import {
-  createProduct,
-  deleteProduct,
-  getAllProducts,
-  getProductById,
-  updateProduct,
-} from "../controllers/productsController.js";
-import upload from "../middleware/upload.js";
+import * as controller from "../controllers/productController.js";
+import { validate } from "../middleware/validate.js";
+import { createProductSchema } from "../validations/product.validation.js";
 
 const router = express.Router();
 
-router.get("/", getAllProducts);
-router.get("/:id", getProductById);
-router.post("/", upload.array("images", 5), createProduct);
-router.put("/:id", upload.array("images", 5), updateProduct);
-router.delete("/:id", deleteProduct);
+router.get("/", controller.getAllProduct);
+router.get("/search", controller.searchProducts);
+router.get("/:id", controller.getProductById);
+router.post("/", validate(createProductSchema), controller.createProduct);
+router.put("/:id", controller.updateProduct);
+router.delete("/", controller.deleteManyProducts);
+router.delete("/:id", controller.deleteProduct);
 
 export default router;
