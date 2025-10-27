@@ -110,13 +110,13 @@ const OrderDetail = ({ order, onUpdateOrder }) => {
               {total >= 0 ? total.toLocaleString("vi-VN") : "0"}
             </div>
           </div>
-          <div className="flex justify-between items-center">
+          {/* <div className="flex justify-between items-center">
             <div className="font-bold">Khách thanh toán</div>
             <input
               type="number"
               className="appearance-none w-1/3 p-0 border-b-2 rounded-none input border-0 border-gray-400 focus:outline-none text-end font-semibold text-lg"
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="flex justify-between space-x-3 mt-2">

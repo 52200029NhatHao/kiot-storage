@@ -1,24 +1,93 @@
 services:
-  database:
+  product-db:
     image: mongo:7
-    container_name: kiot-mongodb
+    container_name: product-mongodb
+    restart: always
+    ports:
+      - "27018:27017"
+    volumes:
+      - product_data:/data/db
+    networks:
+      - app-network
+
+  order-db:
+    image: mongo:7
+    container_name: order-mongodb
     restart: always
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - order_data:/data/db
+    networks:
+      - app-network
 
-  backend:
-    build: ./backend
-    container_name: kiot-backend
-    restart: on-failure
+  redis:
+    image: redis:7
+    container_name: redis
     ports:
-      - "5000:5000"
+      - "6379:6379"
+    networks:
+      - app-network
+
+  product-service:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    container_name: product-service
+    restart: always
     environment:
-      - MONGO_URL=mongodb://database:27017/warehouse
+      - MONGO_URL=mongodb://product-db:27017/products-db
+      - REDIS_HOST=redis
+      - PORT=5001
     depends_on:
-      - database
+      - product-db
+      - redis
+    ports:
+      - "5001:5001"
+    networks:
+      - app-network
     command: sh -c "node seed.js && node src/server.js"
+
+  order-service: &order-service
+    container_name: "order-service"
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    restart: always
+    expose:
+      - "5000"
+    environment:
+      - MONGO_URL=mongodb://order-db:27017/orders-db
+      - REDIS_HOST=redis
+      - PORT=5000
+    depends_on:
+      - order-db
+      - redis
+      - product-service
+    networks:
+      - app-network
+    command: sh -c "node seed.js && node src/server.js"
+
+  order-service-1:
+    <<: *order-service
+    container_name: order-service-1
+
+  order-service-2:
+    <<: *order-service
+    container_name: order-service-2
+
+  order-lb:
+    image: nginx:latest
+    container_name: order-lb
+    depends_on:
+      - order-service-1
+      - order-service-2
+    ports:
+      - "5000:80"
+    volumes:
+      - ./nginx-order.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
 
   frontend:
     build: ./frontend
@@ -27,7 +96,15 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - backend
+      - product-service
+      - order-lb
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
-  mongo_data:
+  product_data:
+  order_data:
