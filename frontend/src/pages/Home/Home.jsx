@@ -6,6 +6,8 @@ import TabBar from "./components/TabBar";
 import { useEffect } from "react";
 
 export default function Home() {
+  const [notificationRefresh, setNotificationRefresh] = useState(0);
+
   const createUniqueId = () => Date.now() + Math.random();
 
   const [orders, setOrders] = useState([
@@ -51,6 +53,10 @@ export default function Home() {
   };
 
   const addOrderItem = (product) => {
+    if (product.stock === 0) {
+      alert("Sản phẩm hết hàng");
+      return;
+    }
     setOrders(
       orders.map((order) => {
         if (order.id !== activeOrderId) return order;
@@ -169,6 +175,7 @@ export default function Home() {
         onSelectTab={setActiveOrderId}
         closeTab={closeTab}
         addOrderItem={addOrderItem}
+        refresh={notificationRefresh}
       />
 
       <main className="flex-1 flex overflow-hidden">
@@ -192,6 +199,7 @@ export default function Home() {
               order={activeOrder}
               submitOrder={submitOrder}
               onUpdateOrder={handleUpdateOrder}
+              refresh={setNotificationRefresh}
             />
           </div>
         </div>

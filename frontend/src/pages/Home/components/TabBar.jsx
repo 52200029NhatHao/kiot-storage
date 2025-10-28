@@ -3,6 +3,7 @@ import Tab from "./Tab";
 import { Link, useNavigate } from "react-router-dom";
 import SuggestProduct from "../../Product/components/SuggestProduct";
 import ProductService from "../../../services/ProductService";
+import NotificationButton from "./NotificationButton";
 
 const TabBar = ({
   orders,
@@ -11,6 +12,7 @@ const TabBar = ({
   onSelectTab,
   closeTab,
   addOrderItem,
+  refresh,
 }) => {
   const [keyword, setKeyword] = useState("");
   const [products, setProducts] = useState([]);
@@ -30,7 +32,7 @@ const TabBar = ({
     };
 
     fetchProducts();
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     const q = (keyword || "").trim().toLowerCase();
@@ -136,13 +138,17 @@ const TabBar = ({
         </div>
       </div>
 
-      <div className="  flex-1 flex px-2 pb-2 justify-end col-span-3">
+      <div className="  flex-1 flex px-2 pb-2 space-x-3 justify-end col-span-3">
         <button
           onClick={() => navigate(`/products?reset=${Date.now()}`)}
           className="px-2 py-2 bg-white text-blue-400 rounded-md shadow-md w-fit flex border border-white font-bold hover:bg-gray-200 hover:border hover:border-gray-500"
         >
           Quản lý sản phẩm
         </button>
+        <NotificationButton
+          refresh={refresh}
+          className="rounded-full p-2 bg-white text-blue-400  shadow-md w-fit flex border border-white font-bold hover:bg-gray-200 hover:border hover:border-gray-500"
+        />
       </div>
     </div>
   );

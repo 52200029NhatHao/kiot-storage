@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import OrderService from "../../../services/OrderService";
 
-const OrderDetail = ({ order, onUpdateOrder }) => {
+const OrderDetail = ({ order, onUpdateOrder, refresh }) => {
   const [discount, setDiscount] = useState(order?.discount || 0);
   const [subtotal, setSubtotal] = useState(0);
 
@@ -17,7 +17,9 @@ const OrderDetail = ({ order, onUpdateOrder }) => {
       if (response) {
         console.log("Order created successfully:", response);
         alert("Thanh toán thành công ");
+
         onUpdateOrder({ ...order, items: [], total: 0, discount: 0 });
+        refresh((prev) => prev + 1);
       } else {
         alert("Thanh toán thất bại ");
       }

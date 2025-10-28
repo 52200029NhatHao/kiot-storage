@@ -72,7 +72,20 @@ export default function OrderItemCard({
         <button onClick={handleDecrease} className="col-span-1 font-bold">
           −
         </button>
-        <p className="col-span-2 text-center">{quantity}</p>
+        <input
+          type="number"
+          className="col-span-2 text-center border-b-2 border-gray-300 focus:outline-none"
+          value={quantity}
+          min={1}
+          max={item.stock}
+          onChange={(e) => {
+            let newQty = parseInt(e.target.value) || 1;
+            newQty = Math.max(1, Math.min(newQty, item.stock));
+            setQuantity(newQty);
+            onQuantityChange?.(item.id, newQty);
+          }}
+        />
+
         <button onClick={handleIncrease} className="col-span-1 font-bold">
           +
         </button>

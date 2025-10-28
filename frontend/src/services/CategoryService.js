@@ -3,7 +3,7 @@ import axios from "axios";
 class CategoryService {
   constructor(baseURL) {
     this.api = axios.create({
-      baseURL: baseURL || "http://localhost:5001/api",
+      baseURL: baseURL || "http://localhost:5000/api",
       headers: {
         "Content-Type": "application/json",
       },
